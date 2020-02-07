@@ -53,23 +53,22 @@ namespace DatingApp.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLogin userForLogin)
         {
-            var userFromRepo = await _authRepository.Login(userForLogin.Username.ToLower(), userForLogin.Password);
-
-            if (userFromRepo == null)
+           var userFromRepo = await _authRepository.Login(userForLogin.Username.ToLower(), userForLogin.Password);
+           if (userFromRepo == null)
                 return Unauthorized();
-
+                    
             var claims = new[]{
                 new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()),
                 new Claim(ClaimTypes.Name, userFromRepo.Username)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8
-            .GetBytes(_config.GetSection("Application:Token").Value));
+                .GetBytes(_config.GetSection("Application:Token").Value));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var tokenDiscriptor = new SecurityTokenDescriptor() {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(1),
+                 Expires = DateTime.Now.AddDays(1),
                 SigningCredentials = creds
             };
 
@@ -80,6 +79,7 @@ namespace DatingApp.API.Controllers
             return Ok(new {
                 token = tokenHandler.WriteToken(token)
             });
+             
         }
     }
 }
