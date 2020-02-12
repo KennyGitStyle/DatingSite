@@ -9,20 +9,22 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DatingApp.API.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthRepository _authRepository;
+        private readonly IAuthRepository _authRepo;
         private readonly IConfiguration _config;
 
-        public AuthController(IAuthRepository authRepository, IConfiguration config)
+        public AuthController(IAuthRepository authRepo, IConfiguration config)
         {
             _config = config;
-            _authRepository = authRepository;
+            _authRepo = authRepo;
         }
 
         [HttpPost("register")]
@@ -36,7 +38,7 @@ namespace DatingApp.API.Controllers
 
             userForRegister.Username = userForRegister.Username.ToLower();
 
-            var checkForUser = await _authRepository.UserAccountExist(userForRegister.Username);
+            var checkForUser = await _authRepo.UserAccountExist(userForRegister.Username);
             if (checkForUser)
                 return BadRequest("Username already exists");
 
@@ -45,7 +47,7 @@ namespace DatingApp.API.Controllers
                 Username = userForRegister.Username
             };
 
-            var createdUser = await _authRepository.Register(userCreated, userForRegister.Password);
+            var createdUser = await _authRepo.Register(userCreated, userForRegister.Password);
 
             return StatusCode(201);
         }
@@ -53,7 +55,7 @@ namespace DatingApp.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLogin userForLogin)
         {
-           var userFromRepo = await _authRepository.Login(userForLogin.Username.ToLower(), userForLogin.Password);
+           var userFromRepo = await _authRepo.Login(userForLogin.Username.ToLower(), userForLogin.Password);
            if (userFromRepo == null)
                 return Unauthorized();
                     
