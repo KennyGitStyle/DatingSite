@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { User } from 'src/app/_models/User';
+import { User } from '../../_models/user';
 
 @Component({
   selector: 'app-member-card',
@@ -10,7 +9,7 @@ import { User } from 'src/app/_models/User';
 export class MemberCardComponent implements OnInit {
   @Input() user: User;
 
-  constructor(private http: HttpClient) { }
+  constructor() { }
 
   ngOnInit() {
   }

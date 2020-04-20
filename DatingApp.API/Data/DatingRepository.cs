@@ -25,38 +25,34 @@ namespace DatingApp.API.Data
 
         public async Task<Photo> GetMainPhotoForUser(int userId)
         {
-            var userMainPhoto = await _context.Photos.
-            Where(u => u.UserId ==userId)
-            .FirstOrDefaultAsync( p => p.IsMain);
-
-            return userMainPhoto;
-
-
+            return await _context.Photos.Where(u => u.UserId == userId)
+                .FirstOrDefaultAsync(p => p.IsMain);
         }
 
         public async Task<Photo> GetPhoto(int id)
         {
             var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
-            
+
             return photo;
         }
 
         public async Task<User> GetUser(int id)
         {
-            var user = await _context.Users.Include(p => p.Photos).FirstOrDefaultAsync(x => x.Id == id);
+            var user = await _context.Users.Include(p => p.Photos).FirstOrDefaultAsync(u => u.Id == id);
+
             return user;
         }
 
         public async Task<IEnumerable<User>> GetUsers()
         {
             var users = await _context.Users.Include(p => p.Photos).ToListAsync();
+
             return users;
         }
 
         public async Task<bool> SaveAll()
         {
-            var savedUsers  = await _context.SaveChangesAsync() > 0;
-            return savedUsers;
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

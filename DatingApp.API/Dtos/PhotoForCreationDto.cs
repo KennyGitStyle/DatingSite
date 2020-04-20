@@ -1,9 +1,9 @@
 using System;
 using Microsoft.AspNetCore.Http;
 
-namespace datingapp.api.Dtos
+namespace DatingApp.API.Dtos
 {
-    public class PhotoForCreation
+    public class PhotoForCreationDto
     {
         public string Url { get; set; }
         public IFormFile File { get; set; }
@@ -11,7 +11,7 @@ namespace datingapp.api.Dtos
         public DateTime DateAdded { get; set; }
         public string PublicId { get; set; }
 
-        public PhotoForCreation()
+        public PhotoForCreationDto()
         {
             DateAdded = DateTime.Now;
         }
