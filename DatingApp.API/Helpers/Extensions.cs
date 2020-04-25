@@ -16,12 +16,13 @@ namespace DatingApp.API.Helpers
 
         public static void AddPagination(this HttpResponse httpResponse, int currentPage, int itemsPerPage, int totalItems, int totalPages)
         {
-            var paginationHeading = new PaginationHeader(currentPage, itemsPerPage, totalItems, totalPages);
-            JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
-            var camelCaseFormatting = jsonSerializerSettings;
-            camelCaseFormatting.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            httpResponse.Headers.Add("Pagination", 
-            JsonConvert.SerializeObject(paginationHeading, camelCaseFormatting));
+            var paginationHeader = new PaginationHeader(currentPage, itemsPerPage, 
+                totalItems, totalPages);
+            var camelCaseFormatter = new JsonSerializerSettings();
+            camelCaseFormatter.ContractResolver = 
+                new CamelCasePropertyNamesContractResolver();
+            httpResponse.Headers.Add("Pagination",
+                JsonConvert.SerializeObject(paginationHeader, camelCaseFormatter));
             httpResponse.Headers.Add("Access-Control-Expose-Headers", "Pagination");
 
         }

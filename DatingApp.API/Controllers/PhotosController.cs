@@ -65,17 +65,15 @@ namespace DatingApp.API.Controllers
 
             if (file.Length > 0)
             {
-                using (var stream = file.OpenReadStream())
+                using var stream = file.OpenReadStream();
+                var uploadParams = new ImageUploadParams()
                 {
-                    var uploadParams = new ImageUploadParams()
-                    {
-                        File = new FileDescription(file.Name, stream),
-                        Transformation = new Transformation()
-                            .Width(500).Height(500).Crop("fill").Gravity("face")
-                    };
+                    File = new FileDescription(file.Name, stream),
+                    Transformation = new Transformation()
+                        .Width(500).Height(500).Crop("fill").Gravity("face")
+                };
 
-                    uploadResult = _cloudinary.Upload(uploadParams);
-                }
+                uploadResult = _cloudinary.Upload(uploadParams);
             }
 
             photoForCreationDto.Url = uploadResult.Uri.ToString();
@@ -91,7 +89,7 @@ namespace DatingApp.API.Controllers
             if (await _repo.SaveAll())
             {
                 var photoToReturn = _mapper.Map<PhotoForReturnDto>(photo);
-                return CreatedAtRoute("GetPhoto", new { id = photo.Id }, photoToReturn);
+                return CreatedAtRoute("GetPhoto", new {userId, id = photo.Id }, photoToReturn);
             }
 
             return BadRequest("Could not add the photo");
