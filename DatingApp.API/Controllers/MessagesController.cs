@@ -1,19 +1,17 @@
 using System;
- using System.Collections.Generic;
- using System.Security.Claims;
- using System.Threading.Tasks;
- using AutoMapper;
- using DatingApp.API.Data;
- using DatingApp.API.Dtos;
- using DatingApp.API.Helpers;
- using DatingApp.API.Models;
- using Microsoft.AspNetCore.Authorization;
- using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using AutoMapper;
+using DatingApp.API.Data;
+using DatingApp.API.Dtos;
+using DatingApp.API.Helpers;
+using DatingApp.API.Models;
+using Microsoft.AspNetCore.Mvc;
 
-  namespace DatingApp.API.Controllers
- {
-     [ServiceFilter(typeof(LogUserActivity))]
-     [Authorize]
+namespace DatingApp.API.Controllers
+{
+    [ServiceFilter(typeof(LogUserActivity))]
      [Route("api/users/{userId}/[controller]")]
      [ApiController]
      public class MessagesController : ControllerBase
@@ -75,14 +73,14 @@ using System;
           [HttpPost]
          public async Task<IActionResult> CreateMessage(int userId, MessageForCreationDto messageForCreationDto)
          {
-             var sender = await _repo.GetUser(userId);
+             var sender = await _repo.GetUser(userId, false);
 
               if (sender.Id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                  return Unauthorized();
 
               messageForCreationDto.SenderId = userId;
 
-              var recipient = await _repo.GetUser(messageForCreationDto.RecipientId);
+              var recipient = await _repo.GetUser(messageForCreationDto.RecipientId, false);
 
               if (recipient == null)
                  return BadRequest("Could not find user");
@@ -95,7 +93,7 @@ using System;
              {
                  var messageToReturn = _mapper.Map<MessageToReturnDto>(message);
                  return CreatedAtRoute("GetMessage", 
-                     new {userId, id = message.Id}, messageToReturn);
+                     new {userId = userId, id = message.Id}, messageToReturn);
              }
 
               throw new Exception("Creating the message failed on save");
